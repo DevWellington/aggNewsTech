@@ -17,7 +17,6 @@ foreach($xmlFile->channel->item as $item) {
 
 	    // $stmt = $cxPDO->prepare("INSERT INTO news (title, link, guid, category, pubDate, description) 
 	    						 // VALUES (:title, :link, :guid, :category, :pubDate, :description)");
-
 		$sql = "INSERT INTO news (title, link, guid, category, pubDate, description) 
 	    						  VALUES ('".$item->title."', '".$item->link."', '".$item->guid."', 
 	    						  		  '".$item->category."', '".$item->pubDate."', '".$item->description."')";
@@ -47,43 +46,38 @@ foreach($xmlFile->channel->item as $item) {
 // 	echo $item->pubDate . PHP_EOL;
 // 	echo $item->description . PHP_EOL;
 
-
-	// echo '<br>';
 }
 
 
+$cxPDO = connPDO::getInstance();
 
+try {
 
-	$cxPDO = connPDO::getInstance();
+    $stmt = $cxPDO->prepare("select * from gnewstech.news order by pubDate desc");
+ 	// $stmt->bindParam(':lmt', $var, PDO::PARAM_STR); 
 
-	try {
-	
-	    $stmt = $cxPDO->prepare("select * from gnewstech.news");
-	 	// $stmt->bindParam(':lmt', $var, PDO::PARAM_STR); 
+    if ($stmt->execute()){
 
-	    if ($stmt->execute()){
+	    while ($obj = $stmt->fetch(PDO::FETCH_OBJ)){
 
-		    while ($obj = $stmt->fetch(PDO::FETCH_OBJ)){
+	    	$ar = explode(' - ', $obj->title);
+	    	$site = $ar[count($ar) - 1];
 
-		    	$ar = explode(' - ', $obj->title);
-		    	$site = $ar[count($ar) - 1];
+	    	echo "<h3>Site: ".$site." </h3>";
+	    	echo "<p>Data Publicacao: ".$obj->pubDate."<br />";
+	    	echo "<a href='".$obj->link."'>";
+	    	echo "<strong>" . $obj->title . "</strong></a><br /><br />";
+	    	// echo "<p>".$obj->description;
 
-		    	echo "<h3>Site: ".$site." </h3>";
-		    	echo "<p>Data Publicacao: ".$obj->pubDate."<br />";
-		    	echo "<a href='".$obj->link."'>";
-		    	echo "<strong>" . $obj->title . "</strong></a><br /><br />";
-		    	// echo "<p>".$obj->description;
+	        // echo "<b>Title:</b> " . $obj->title . " - <b>link:</b> " . $obj->link."</br>";
+	    }
+	} else{
 
-		        // echo "<b>Title:</b> " . $obj->title . " - <b>link:</b> " . $obj->link."</br>";
-		    }
-		} else{
-
-			var_dump('Falha ao Obter os Dados !');
-		}
-	    // fecho o banco
-	    $cxPDO = null;
-	    // tratamento da exeção
-	} catch ( PDOException $e ) {
-	    echo $e->getMessage ();
-	}	
-	
+		var_dump('Falha ao Obter os Dados !');
+	}
+    // fecho o banco
+    $cxPDO = null;
+    // tratamento da exeção
+} catch ( PDOException $e ) {
+    echo $e->getMessage ();
+}	

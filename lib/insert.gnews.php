@@ -5,8 +5,7 @@ require_once "conexao.pdo.php";
 /**
 * 
 */
-class Insert extends connPDO
-{
+class Insert extends connPDO{
 	
 	private static $title;
 	private static $link;
@@ -17,16 +16,13 @@ class Insert extends connPDO
 
 	public $cPDO = null;
 
-
 	function __construct() {
 
 	}
 
-	public static function InsertNewsGoogle(){
-		
+	public static function InsertNewsGoogle(){		
 
 		$return = false;
-
 		$cxPDO = parent::getInstance();
 
 		try {
@@ -65,8 +61,7 @@ class Insert extends connPDO
 		return $return;		
 	}
 	
-
-
+    // getters and setters
 
     /**
      * Gets the value of title.
