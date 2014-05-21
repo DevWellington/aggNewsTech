@@ -1,15 +1,18 @@
-﻿<meta http-equiv="refresh" content="600">
+﻿<!DOCTYPE html>
+<meta http-equiv="refresh" content="600">
 
 <?php 
 
-require_once "../lib/conexao.pdo.php";
+require_once "../../lib/conexao.pdo.php";
 
 
 // class generate {
 
 function html_to_obj($html) {
     $dom = new DOMDocument();
+    libxml_use_internal_errors(true);
     $dom->loadHTML($html);
+    libxml_use_internal_errors(false);
     return element_to_obj($dom->documentElement);
 }
 
@@ -109,20 +112,9 @@ try {
     echo $e->getMessage ();
 }	
 
-require_once "../lib/twitter.class.php";
+require_once "../../lib/twitter.class.php";
 
 $twitter = new Twitter();
 $reply = $twitter->sendTweet($arReturn);
 
 var_dump($reply);
-
-
-// echo "<table>";
-// foreach ($arReturn as $row) {
-//    echo "<tr>";
-//    foreach ($row as $column) {
-//       echo "<td>$column</td>";
-//    }
-//    echo "</tr>";
-// }    
-// echo "</table>";
