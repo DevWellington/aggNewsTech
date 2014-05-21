@@ -5,10 +5,10 @@ class conn{
 	public $ip, $user, $pass, $db;
 	
 	public function __construct(){
-		$this->ip   = "localhost";
-		$this->user = "root";
-		$this->pass = "";
-		$this->db   = "gnewstech";
+		$this->ip   = null;
+		$this->user = null;
+		$this->pass = null;
+		$this->db   = null;
 	}
 	public function getHost(){
 		return $this->ip;
@@ -69,34 +69,3 @@ class connPDO extends PDO {
     }
 }
 
-
-/*	
-$cxPDO = connPDO::getInstance();
-
-try {
-
-    $var = 'BA';
-
-    $stmt = $cxPDO->prepare("select * from table");
- 	// $stmt->bindParam(':lmt', $var, PDO::PARAM_STR); 
-
-    if ($stmt->execute()){
-
-	    while ($obj = $stmt->fetch(PDO::FETCH_OBJ)){
-	    
-	        echo "<b>Nome:</b> " . $obj->ba . " - <b>Telefone:</b> " . $obj->ocorrencia."</br>";
-	    }
-	} else{
-
-		var_dump('Falha ao Obter os Dados !');
-	}
-    // fecho o banco
-    $cxPDO = null;
-    // tratamento da exeção
-} catch ( PDOException $e ) {
-    echo $e->getMessage ();
-}	
-*/
-
-	
-?>
