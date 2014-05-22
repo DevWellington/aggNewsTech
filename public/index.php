@@ -1,10 +1,8 @@
 ﻿<!DOCTYPE html>
 <meta http-equiv="refresh" content="600">
-
 <?php 
 
 require_once "../../lib/conexao.pdo.php";
-
 
 // class generate {
 
@@ -33,71 +31,42 @@ function element_to_obj($element) {
 }
 	
 
- $arReturn = array(
- 	'ID' => array(),
- 	'title' => array(),
- 	'link' => array(),
- 	'guid' => array(), 
- 	'category' => array(), 
- 	'site' => array(), 
- 	'pubDate' => array(),
- 	'linkImg' => array(),
- 	'pubDateServer' => array(),
- 	'descriptionNew' => array(),
- 	'description' => array()
- );
-
-
 try {
 
 	$cxPDO = connPDO::getInstance();
 
 
-    $stmt = $cxPDO->prepare("SELECT * FROM news ORDER BY pubDate desc limit 20");
+    $stmt = $cxPDO->prepare("SELECT * FROM tbl_newsTech INNER JOIN defaultImage_Link ORDER BY pubDateServer DESC limit 20");
  	// $stmt->bindParam(':lmt', $var, PDO::PARAM_STR); 
 
     if ($stmt->execute()){
 
 	    while ($obj = $stmt->fetch(PDO::FETCH_OBJ)){
 
-	    	$ar = explode(' - ', $obj->title);
-	    	$site = $ar[count($ar) - 1];
+            /*
+            * TODO:
+            *   - Implementar Slim framework;
+            *   - Implementar Twing para tratar esse feioso aqui em baixo :)
+            *
+            */
 
-	    	$link = substr($obj->link, strrpos($obj->link, 'url=') + 4);
+            echo "<div style='width: 300px; /* height: 300px;float: left;*/ margin: 10px; border: 1px solid silver; padding: 8px'>";
+            echo "<h3 style='font-family: arial, helvetica, serif; font-size: 15px; margin: 2px; text-align: center;' >Site: ".$obj->site." </h3>";
+            echo "<div style='margin: 10px 0;'>";
+            echo "<a href='".$obj->link."'>";
+            echo $obj->title."<br />";
 
-	    	$auxImg = substr($obj->description, strrpos($obj->description, '<img src="') + 10);
-	    	$linkImg = substr($auxImg, 0, strrpos($auxImg, '" alt'));
+            if (substr($obj->linkImg, 0, 2) == "//"){
+                echo "<img src=".$obj->linkImg." alt=".$obj->title." title=".$obj->title." style='float: left; margin: 10px 10px 10px 0;' />";
+            } else {
+                echo "<img src='".$obj->defaultImage_Link."' height='80' width='80' style='float: left; margin: 10px 10px 10px 0;'  alt=".$obj->title." title=".$obj->title." />";
+            }
 
-	    	$auxDN = substr($obj->description, strrpos($obj->description, '</b></font><br /><font size="-1">') + 33);
-	    	$descriptionNew = substr($auxDN, 0, strrpos($auxDN, '.</font>'));
-
-	    	$description = html_to_obj($obj->description);
-
-	    	array_push($arReturn['ID'], $obj->ID);
-	    	array_push($arReturn['title'], $obj->title);
-	    	array_push($arReturn['link'], $link);
-	    	array_push($arReturn['guid'], $obj->guid);
-	    	array_push($arReturn['category'], $obj->category);
-	    	array_push($arReturn['site'], $site);
-	    	array_push($arReturn['pubDate'], $obj->pubDate);
-	    	array_push($arReturn['description'], $obj->description);
-	    	array_push($arReturn['pubDateServer'], $obj->pubDateServer);
-	    	array_push($arReturn['linkImg'], $linkImg);
-	    	array_push($arReturn['descriptionNew'], $descriptionNew);
-	    	
-
-	    	echo "<h3>Site: ".$site." </h3>";
-	    	echo "<p>Data Publicacao: ".$obj->pubDate." - ".$obj->pubDateServer."<br />";
-	    	echo "<a href='".$link."'>";
-
-	    	if (substr($linkImg, 0, 2) == "//"){
-		    	echo "<img src=".$linkImg." alt=".$obj->title." title=".$obj->title." />";
-	    	} else {
-		    	echo "<img src='https://lh3.googleusercontent.com/-iu5z8baXPus/UVXP4hqWMrI/AAAAAAAAAFM/RE4JyPWiYEs/s300-no/banner+RunFast.png' height='80' width='80'  alt=".$obj->title." title=".$obj->title." />";
-	    	}
-	    	echo "<strong>" . $obj->title . "</strong></a><br /><br />";
-	    	echo "<p>".$descriptionNew."</p>";
-	    	// echo "<p>".$obj->description."</p>";
+	    	echo "</a>";
+            echo "</div>";
+	    	echo "<span>".$obj->descriptionNew."</span>";
+            echo "<br /><br /><span style='font-size: 10px; float: right'><strong>Data Publicacao: </strong>".$obj->pubDateServer."</span><br />";
+            echo "</div>";
 
 	    }
 
@@ -111,10 +80,3 @@ try {
 } catch ( PDOException $e ) {
     echo $e->getMessage ();
 }	
-
-require_once "../../lib/twitter.class.php";
-
-$twitter = new Twitter();
-$reply = $twitter->sendTweet($arReturn);
-
-var_dump($reply);

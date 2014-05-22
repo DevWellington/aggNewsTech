@@ -5,10 +5,10 @@ class conn{
 	public $ip, $user, $pass, $db;
 	
 	public function __construct(){
-		$this->ip   = null;
+		$this->ip = null;
 		$this->user = null;
 		$this->pass = null;
-		$this->db   = null;
+		$this->db = null;
 	}
 	public function getHost(){
 		return $this->ip;

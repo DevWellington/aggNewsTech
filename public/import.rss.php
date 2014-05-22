@@ -1,35 +1,17 @@
 <!DOCTYPE html>
 <?php 
 
-require_once "../lib/conexao.pdo.php";
+require_once "../../lib/conexao.pdo.php";
+require_once "../../lib/twitter.class.php";
 
-
- $arReturn = array(
- 	// 'ID' => array(),
- 	'title' => array(),
- 	'link' => array(),
- 	'guid' => array(), 
- 	'category' => array(), 
- 	'site' => array(), 
- 	'pubDate' => array(),
- 	'linkImg' => array(),
- 	'pubDateServer' => array(),
- 	'descriptionNew' => array(),
- 	'description' => array()
-);
-
+$arReturn = array();
 
 $linkRSS = "https://news.google.com/news/feeds?cf=all&ned=pt-BR_br&hl=pt-BR&topic=t&output=rss&num=30";
 $xmlFile = simplexml_load_file($linkRSS);
 
-// $cxPDO = connPDO::getInstance();
-
 foreach($xmlFile->channel->item as $item) {
 
-	try {
-	    // $stmt = $cxPDO->prepare("INSERT INTO news (title, link, guid, category, pubDate, description) 
-	    						 // VALUES (:title, :link, :guid, :category, :pubDate, :description)");
-
+    try {
 
     	$ar = explode(' - ', $item->title);
     	$site = $ar[count($ar) - 1];
@@ -48,31 +30,18 @@ foreach($xmlFile->channel->item as $item) {
 
     	$pubDate_MySQL = $auxPubDate[2]."-".$monthInt['month']."-".$auxPubDate[0]." ".$auxPubDate[3];
 
-
-    	array_push($arReturn['title'], (string) $item->title);
-    	array_push($arReturn['link'], $link);
-    	array_push($arReturn['guid'], (string) $item->guid);
-    	array_push($arReturn['category'], (string) $item->category);
-    	array_push($arReturn['site'], $site);
-    	array_push($arReturn['pubDate'], (string) $item->pubDate);
-    	array_push($arReturn['description'], (string) $item->description);
-    	array_push($arReturn['pubDateServer'], $pubDate_MySQL);
-    	array_push($arReturn['linkImg'], $linkImg);
-    	array_push($arReturn['descriptionNew'], $descriptionNew);
-
-
-    	// var_dump($item->title);
-    	// echo $item->title;
-
-
-
-		// $sql = "INSERT INTO news (title, link, guid, category, pubDate, description, pubDateServer) 
-	 //    						  VALUES ('".$item->title."', '".$item->link."', '".$item->guid."', 
-	 //    						  		  '".$item->category."', '".$pubDate_MySQL."', '".$item->description."', now())";
-
-		// $stmt = $cxPDO->prepare($sql);
-
-	 //    $return = $stmt->execute();
+        array_push($arReturn, array(
+            'title' => (string) $item->title,
+            'link' => $link,
+            'guid' => (string) $item->guid,
+            'category' => (string) $item->category,
+            'site' => $site,
+            'pubDate' => (string) $item->pubDate,
+            'linkImg' => $linkImg,
+            'pubDateServer' => $pubDate_MySQL,
+            'descriptionNew' => $descriptionNew,
+            'description' => (string) $item->description
+        ));
 
 	} catch ( PDOException $e ) {
 	    echo $e->getMessage ();
@@ -80,8 +49,66 @@ foreach($xmlFile->channel->item as $item) {
 
 }
 
+echo "<pre>";
+// var_dump($arReturn);
+$cxPDO = connPDO::getInstance();
+
+foreach ($arReturn as $field => $item) {
+
+    $obj = (object) $item;
+
+    $stmt = $cxPDO->prepare("INSERT INTO tbl_newsTech (title, link, guid, category, site, 
+                                                        pubDate, description, pubDateServer,
+                                                        linkImg, descriptionNew, dt_import) 
+
+                             VALUES (:title, :link, :guid, :category, :site, 
+                                     :pubDate, :description, :pubDateServer, 
+                                     :linkImg, :descriptionNew, now())");
+
+    $stmt->bindParam(':title', $obj->title);
+    $stmt->bindParam(':link', $obj->link);
+    $stmt->bindParam(':guid', $obj->guid);
+    $stmt->bindParam(':category', $obj->category);
+    $stmt->bindParam(':site', $obj->site);
+    $stmt->bindParam(':pubDate', $obj->pubDate);
+    $stmt->bindParam(':description', $obj->description);
+    $stmt->bindParam(':pubDateServer', $obj->pubDateServer);
+    $stmt->bindParam(':linkImg', $obj->linkImg);
+    $stmt->bindParam(':descriptionNew', $obj->descriptionNew);
+
+    $return = $stmt->execute();
+
+    if ($return){
+        echo $obj->title.PHP_EOL;
+
+        $reply = Twitter::sendTweet($obj);
+        echo "\t\t<strong> ".$reply."</strong>\n";
+
+
+        $lastID = $cxPDO->lastInsertId('title');
+
+        $st = $cxPDO->prepare("INSERT INTO logTweets (user, idtbl_newsTech, dtSendTweet) 
+                                 VALUES ('DevWellington', :idtbl_newsTech, now())");
+
+        $st->bindParam(':idtbl_newsTech', $lastID);
+        $st->execute();
+
+        $rInsLog = $st->errorInfo();
+        if ($rInsLog[2] !== NULL){
+            echo "Erro ao gravar o Log! \n";
+        }
+
+    } else {
+
+        $arError = $stmt->errorInfo();
+        echo "ERROR - ".$arError[2].PHP_EOL;
+    }
+
+    flush();
+    ob_flush();
+
+}
+echo "</pre>";
 // fecho o banco
 $cxPDO = null;
 
-
-var_dump($arReturn);

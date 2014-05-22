@@ -1,33 +1,46 @@
--- --------------------------------------------------------
--- Servidor:                     127.0.0.1
--- Versão do servidor:           5.6.12-log - MySQL Community Server (GPL)
--- OS do Servidor:               Win32
--- HeidiSQL Versão:              8.3.0.4694
--- --------------------------------------------------------
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+delimiter $$
 
--- Copiando estrutura do banco de dados para gnewstech
-CREATE DATABASE IF NOT EXISTS `gnewstech` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `gnewstech`;
+CREATE TABLE `defaultImage_Link` (
+  `iddefaultImage` int(11) NOT NULL AUTO_INCREMENT,
+  `defaultImage_Link` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`iddefaultImage`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1$$
 
+delimiter $$
 
--- Copiando estrutura para tabela gnewstech.news
-CREATE TABLE IF NOT EXISTS `news` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `link` longtext CHARACTER SET latin1 NOT NULL,
-  `guid` varchar(100) CHARACTER SET latin1 NOT NULL,
-  `category` varchar(100) CHARACTER SET latin1 NOT NULL,
-  `pubDate` varchar(100) CHARACTER SET latin1 NOT NULL,
-  `description` longtext CHARACTER SET latin1 NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `title` (`title`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `defaultImage_Link` (
+  `iddefaultImage` int(11) NOT NULL AUTO_INCREMENT,
+  `defaultImage_Link` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`iddefaultImage`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1$$
 
--- Exportação de dados foi desmarcado.
-/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
-/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+delimiter $$
+
+CREATE TABLE `logTweets` (
+  `idlogTweets` int(11) NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `idtbl_newsTech` int(11) DEFAULT NULL,
+  `dtSendTweet` datetime DEFAULT NULL,
+  PRIMARY KEY (`idlogTweets`),
+  UNIQUE KEY `uk` (`user`,`idtbl_newsTech`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1$$
+
+delimiter $$
+
+CREATE TABLE `tbl_newsTech` (
+  `idtbl_newsTech` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `link` varchar(255) DEFAULT NULL,
+  `guid` varchar(255) DEFAULT NULL,
+  `category` varchar(45) DEFAULT NULL,
+  `site` varchar(45) DEFAULT NULL,
+  `pubDate` varchar(45) DEFAULT NULL,
+  `description` longtext,
+  `pubDateServer` datetime DEFAULT NULL,
+  `linkImg` varchar(255) DEFAULT NULL,
+  `descriptionNew` longtext,
+  `dt_import` datetime DEFAULT NULL,
+  PRIMARY KEY (`idtbl_newsTech`),
+  UNIQUE KEY `title_UNIQUE` (`title`)
+) ENGINE=InnoDB AUTO_INCREMENT=3626 DEFAULT CHARSET=latin1$$
+
