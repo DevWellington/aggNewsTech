@@ -4,32 +4,8 @@
 
 require_once "../../lib/conexao.pdo.php";
 
-// class generate {
+// todo organizar o codigo e gerar POO - class generate {
 
-function html_to_obj($html) {
-    $dom = new DOMDocument();
-    libxml_use_internal_errors(true);
-    $dom->loadHTML($html);
-    libxml_use_internal_errors(false);
-    return element_to_obj($dom->documentElement);
-}
-
-function element_to_obj($element) {
-    $obj = array("tag" => $element->tagName);
-    foreach ($element->attributes as $attribute) {
-        $obj[$attribute->name] = $attribute->value;
-    }
-    foreach ($element->childNodes as $subElement) {
-        if ($subElement->nodeType == XML_TEXT_NODE) {
-            $obj["html"] = $subElement->wholeText;
-        }
-        else {
-            $obj["children"][] = element_to_obj($subElement);
-        }
-    }
-    return $obj;
-}
-	
 
 try {
 
