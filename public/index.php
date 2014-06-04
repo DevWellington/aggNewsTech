@@ -1,23 +1,23 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <meta http-equiv="refresh" content="600">
-<?php 
+<?php
 
-require_once "../../lib/conexao.pdo.php";
+require_once "../lib/conexao.pdo.php";
 
 // todo organizar o codigo e gerar POO - class generate {
 
 
 try {
 
-	$cxPDO = connPDO::getInstance();
+    $cxPDO = connPDO::getInstance();
 
 
     $stmt = $cxPDO->prepare("SELECT * FROM tbl_newsTech INNER JOIN defaultImage_Link ORDER BY pubDateServer DESC limit 20");
- 	// $stmt->bindParam(':lmt', $var, PDO::PARAM_STR); 
+    // $stmt->bindParam(':lmt', $var, PDO::PARAM_STR);
 
     if ($stmt->execute()){
 
-	    while ($obj = $stmt->fetch(PDO::FETCH_OBJ)){
+        while ($obj = $stmt->fetch(PDO::FETCH_OBJ)){
 
             /*
             * TODO:
@@ -38,18 +38,18 @@ try {
                 echo "<img src='".$obj->defaultImage_Link."' height='80' width='80' style='float: left; margin: 10px 10px 10px 0;'  alt=".$obj->title." title=".$obj->title." />";
             }
 
-	    	echo "</a>";
+            echo "</a>";
             echo "</div>";
-	    	echo "<span>".$obj->descriptionNew."</span>";
+            echo "<span>".$obj->descriptionNew."</span>";
             echo "<br /><br /><span style='font-size: 10px; float: right'><strong>Data Publicacao: </strong>".$obj->pubDateServer."</span><br />";
             echo "</div>";
 
-	    }
+        }
 
-	} else{
+    } else{
 
-		var_dump('Falha ao Obter os Dados !');
-	}
+        var_dump('Falha ao Obter os Dados !');
+    }
     // fecho o banco
     $cxPDO = null;
     // tratamento da exeção
