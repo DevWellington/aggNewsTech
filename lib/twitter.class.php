@@ -6,76 +6,34 @@
 */
 class Twitter {
 	
+	private static $yourKey;
+	private static $yourSecret;
+	private static $yourToken;
+	private static $yourTokenSecret;
+
+
 	function __construct() {
-	}
-
-	public static function sendTweet($obj){
-
-		$cb = self::setConnectionTwitterAPI();
-
-		$twett = self::trataTwett($obj);
-
-		if (strlen($twett) > 10){
-	
-			$params = array(
-			    'status' => $twett
-			);
-
-			$reply = $cb->statuses_update($params);
-			if ($reply->id_str > 0){
-				$return = PHP_EOL."\n<strong>Tweet Enviado com Sucesso !!!</strong>\n".PHP_EOL;
-			} else {
-				$return = $reply->errors[0]->message;
-			}
-
-		} else {
-			echo "Tweet nao enviado: (" . $twett . ")";
-		}
-
-		return $return;
-	}
-
-
-	private static function setConnectionTwitterAPI(){
-
 		require_once('codebird-php/codebird.php');
 
-		try {
-
-			\Codebird\Codebird::setConsumerKey(self::getTwitterAcess()->yourKey, self::getTwitterAcess()->yourSecret);
-			$cb = \Codebird\Codebird::getInstance();
-
-			$cb->setToken(self::getTwitterAcess()->yourToken, self::getTwitterAcess()->yourTokenSecret);
-
-			return $cb;
-		
-		} catch (Exception $e) {
-
-			echo "Error on connection on Twitter API: \n" . $e->getMessage();	
-		}
-
+		self::$yourKey = null;
+		self::$yourSecret = null;
+		self::$yourToken = null;
+		self::$yourTokenSecret = null;
 	}
 
-	private static function getTwitterAcess(){
+	public static function sendTweet(array $arReturn){
 
-		$arReturn = array(
-			"yourKey" => null,
-			"yourSecret" => null,
-			"yourToken" => null,
-			"yourTokenSecret" => null,
-			"UserName" => null
-		);
+		\Codebird\Codebird::setConsumerKey(self::$yourKey, self::$yourSecret);
+		$cb = \Codebird\Codebird::getInstance();
 
-		return (object) $arReturn;
-	}
+		$cb->setToken(self::$yourToken, self::$yourTokenSecret);
 
-	private static function trataTwett($obj){
 
-		$site = $obj->site;
-		$title = str_replace($site, '', $obj->title);
+		$site = $arReturn['site'][0];
+		$title = str_replace($site, '', $arReturn['title'][0]);
 
-		$link = $obj->link;
-		$descriptionNew = $obj->descriptionNew;
+		$link = $arReturn['link'][0];
+		$descriptionNew = $arReturn['descriptionNew'][0];
 
 		$lenTweet = strlen($title) + 20;
 		$tmDescricao = 140 - $lenTweet;
@@ -83,9 +41,22 @@ class Twitter {
 		if ($tmDescricao > 0) 
 			$descriptionNew = substr($descriptionNew, 0, $tmDescricao - 8);
 
-		$sTweet = $title . $descriptionNew . "... " . $link;
+		$sTweet = $title.$descriptionNew."... ".$link;
+		 
+		$params = array(
+		    'status' => $sTweet
+		);
 
-		return $sTweet;
+		$reply = $cb->statuses_update($params);
+
+		if ($reply->id_str > 0){
+			$return = 'Tweet Enviado com Sucesso !!!';
+		} else {
+
+			$return = $reply->errors[0]->message;
+		}
+
+		return $return;
 	}
 
 }
