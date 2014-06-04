@@ -6,9 +6,9 @@
  * Time: 00:21
  */
 
-class Import_STBR {
+class import_STBR extends connPDO {
 
-    private static $arAgenda = array();
+    protected static $arAgenda = array();
 
     public static function getArrayData($html){
 
