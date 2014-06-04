@@ -59,9 +59,9 @@ class connPDO extends PDO {
 		    	$dsnAux = "mysql:host=".$connMySQL->getHost().";dbname=".$connMySQL->getBanco();
 
                 self::$instancia = new connPDO($dsnAux, $connMySQL->getUsuario(), $connMySQL->getSenha());
-            } catch ( Exception $e ) {
-                echo 'Erro ao conectar';
-                exit ();
+            } catch(Exception $e) {
+                echo "Erro ao conectar\n " . $e->getMessage();
+                exit();
             }
         }
         // Se já existe instancia na memória eu retorno ela
