@@ -84,7 +84,7 @@ class Insert extends connPDO{
     {
         self::$title = $title;
 
-        return $this;
+        return self;
     }
 
     /**
@@ -108,7 +108,7 @@ class Insert extends connPDO{
     {
         self::$link = $link;
 
-        return $this;
+        return self;
     }
 
     /**
@@ -132,7 +132,7 @@ class Insert extends connPDO{
     {
         self::$guid = $guid;
 
-        return $this;
+        return self;
     }
 
     /**
@@ -156,7 +156,7 @@ class Insert extends connPDO{
     {
         self::$category = $category;
 
-        return $this;
+        return self;
     }
 
     /**
@@ -180,7 +180,7 @@ class Insert extends connPDO{
     {
         self::$pubDate = $pubDate;
 
-        return $this;
+        return self;
     }
 
     /**
@@ -204,7 +204,7 @@ class Insert extends connPDO{
     {
         self::$description = $description;
 
-        return $this;
+        return self;
     }
 }
 
