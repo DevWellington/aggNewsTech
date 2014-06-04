@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<?php 
+<?php
 
-require_once "../../lib/conexao.pdo.php";
-require_once "../../lib/twitter.class.php";
+require_once "../lib/conexao.pdo.php";
+require_once "../lib/twitter.class.php";
 
 $arReturn = array();
 
@@ -13,22 +13,22 @@ foreach($xmlFile->channel->item as $item) {
 
     try {
 
-    	$ar = explode(' - ', $item->title);
-    	$site = $ar[count($ar) - 1];
+        $ar = explode(' - ', $item->title);
+        $site = $ar[count($ar) - 1];
 
-    	$link = substr($item->link, strrpos($item->link, 'url=') + 4);
+        $link = substr($item->link, strrpos($item->link, 'url=') + 4);
 
-    	$auxImg = substr($item->description, strrpos($item->description, '<img src="') + 10);
-    	$linkImg = substr($auxImg, 0, strrpos($auxImg, '" alt'));
+        $auxImg = substr($item->description, strrpos($item->description, '<img src="') + 10);
+        $linkImg = substr($auxImg, 0, strrpos($auxImg, '" alt'));
 
-    	$auxDN = substr($item->description, strrpos($item->description, '</b></font><br /><font size="-1">') + 33);
-    	$descriptionNew = substr($auxDN, 0, strrpos($auxDN, '.</font>'));
+        $auxDN = substr($item->description, strrpos($item->description, '</b></font><br /><font size="-1">') + 33);
+        $descriptionNew = substr($auxDN, 0, strrpos($auxDN, '.</font>'));
 
-    	$auxPubDate = substr($item->pubDate, 5);
-    	$auxPubDate = explode(' ', $auxPubDate);
-	 	$monthInt = date_parse($auxPubDate[1]);
+        $auxPubDate = substr($item->pubDate, 5);
+        $auxPubDate = explode(' ', $auxPubDate);
+        $monthInt = date_parse($auxPubDate[1]);
 
-    	$pubDate_MySQL = $auxPubDate[2]."-".$monthInt['month']."-".$auxPubDate[0]." ".$auxPubDate[3];
+        $pubDate_MySQL = $auxPubDate[2]."-".$monthInt['month']."-".$auxPubDate[0]." ".$auxPubDate[3];
 
         array_push($arReturn, array(
             'title' => (string) $item->title,
@@ -43,9 +43,9 @@ foreach($xmlFile->channel->item as $item) {
             'description' => (string) $item->description
         ));
 
-	} catch ( PDOException $e ) {
-	    echo $e->getMessage ();
-	}	
+    } catch ( PDOException $e ) {
+        echo $e->getMessage ();
+    }
 
 }
 
